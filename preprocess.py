@@ -21,6 +21,13 @@ Pre-processing csv files to feed them into our proposed model
 적군 베이스 위치 확실여부	범주형	적 본진 찾은적 있냐		0	1	CheckEmBase
 3분전 완성된 해처리 수	수치형			0	3	HatBefore3M
 앞마당 건설중인 해처리의 HP	수치형	0 ~ 1250		0	1250	FrontHatHP
+
+
+## 181130
+Em -> en
+앞에 모두 소문자 처리
+Map, Y 추가
+ememyBaseIsVisible 추가
 """
 import pandas as pd
 import numpy as np
@@ -33,15 +40,26 @@ print('start preprocess!')
 
 total_df = pd.DataFrame()
 
-for f in glob.glob(arglist.raw_files_dir+'*'+arglist.raw_file_ext):
+n_train_files = arglist.n_train_files
+
+
+for n, f in enumerate(glob.glob(arglist.raw_files_dir+'*'+arglist.raw_file_ext)):
+
+    if n > n_train_files:
+        break
+
     df = pd.read_csv(f, sep=',')
     util.encode_onehot()
+
+    # string ->
+
+    
 
     # min max normalization
     df = util.normalize_columns_dataframe(df, arglist.l_columns_with_min_max)
 
     # remove Time column
-    df.drop(['Time'], axis=1)
+    df.drop(['time'], axis=1)
     total_df = total_df.append(df)
 
 
