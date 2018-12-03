@@ -42,8 +42,9 @@ total_df = pd.DataFrame()
 
 n_train_files = arglist.n_train_files
 
+for n, f in enumerate(glob.glob(arglist.raw_files_dir + 'train/' + '*' + arglist.raw_file_ext)):
 
-for n, f in enumerate(glob.glob(arglist.raw_files_dir+'*'+arglist.raw_file_ext)):
+    print('{} file is preprocessing'.format(n))
 
     if n > n_train_files:
         break
@@ -53,7 +54,35 @@ for n, f in enumerate(glob.glob(arglist.raw_files_dir+'*'+arglist.raw_file_ext))
 
     # string ->
 
-    
+    # min max normalization
+    df = util.normalize_columns_dataframe(df, arglist.l_columns_with_min_max)
+
+    # remove Time column
+    df.drop(['time'], axis=1)
+    total_df = total_df.append(df)
+
+util.dump_pickle_even_when_no_exist(arglist.pickle_file, total_df, arglist.pickle_dir + 'train/' )
+
+
+
+
+print('start preprocess!')
+
+total_df = pd.DataFrame()
+
+n_train_files = arglist.n_train_files
+
+for n, f in enumerate(glob.glob(arglist.raw_files_dir + 'test/' + '*' + arglist.raw_file_ext)):
+
+    print('{} file is preprocessing'.format(n))
+
+    if n > n_train_files:
+        break
+
+    df = pd.read_csv(f, sep=',')
+    util.encode_onehot()
+
+    # string ->
 
     # min max normalization
     df = util.normalize_columns_dataframe(df, arglist.l_columns_with_min_max)
@@ -62,5 +91,4 @@ for n, f in enumerate(glob.glob(arglist.raw_files_dir+'*'+arglist.raw_file_ext))
     df.drop(['time'], axis=1)
     total_df = total_df.append(df)
 
-
-util.dump_pickle_even_when_no_exist(arglist.pickle_file, total_df, arglist.pickle_dir)
+util.dump_pickle_even_when_no_exist(arglist.pickle_file, total_df, arglist.pickle_dir + 'test/' )

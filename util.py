@@ -34,7 +34,7 @@ def dump_pickle_even_when_no_exist(file, content, dir=None):
     # if os.path.isfile(dir+file):
     #     pass
     # else:
-    with open(arglist.pickle_dir+arglist.pickle_file, 'wb') as handle:
+    with open(dir+arglist.pickle_file, 'wb') as handle:
         pickle.dump(content, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def load_pickle(file, dir=None):

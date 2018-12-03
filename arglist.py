@@ -3,16 +3,16 @@ raw_file_ext = '.csv'
 pickle_dir = 'prepocessed_data/'
 pickle_file = 'data.pickle'
 
-nn_hidden_size = 24
+nn_hidden_size = 100
 nn_input_size = 27
 nn_output_size = 11
 
 use_cuda = False
 
-n_epochs = 10
-n_batch_size = 20
+n_epochs = 100
+n_batch_size = 40
 
-n_train_files = 10
+n_train_files = 50
 
 # training data meta information
 l_columns_categorical = ['emGas', 'myBaseEmGas', 'emIsClose', 'checkEmBase', 'ememyBaseIsVisible']

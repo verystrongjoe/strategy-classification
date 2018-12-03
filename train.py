@@ -47,17 +47,42 @@ def rolling(df, window, step):
 
 d_train = load_dataset(train_mode=True)
 model = build_network()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+
+
+# https://stackoverflow.com/questions/51102205/how-to-know-the-labels-assigned-by-astypecategory-cat-codes
+categories_counts = d_train['y'].astype('category').cat.codes.value_counts()
+categories = d_train['y'].astype('category').cat.codes.unique()
+
+
+print('--------------------------------------------')
+print('total count :{}'.format(len(d_train)))
+print('--------------------------------------------')
+print('counts of each strategies')
+print('--------------------------------------------')
+
+for c in categories:
+    print(' origin {}, category code : {}, counts {}'.format(
+        d_train['y'].astype('category').cat.categories[c],
+        c, categories_counts[c]
+    )
+    )
+print('--------------------------------------------')
+
 
 # This is particularly useful when you have an unbalanced training set.
 criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
 
 ave_loss = 0
 
 for epoch in range(arglist.n_epochs):
 
+    # training
+    running_loss = 0
+
     for batch_idx, data in rolling(d_train, arglist.n_batch_size, arglist.n_batch_size):
-        optimizer.zero_grad()
 
         """
         temporarily, 30 -> 10
@@ -68,19 +93,18 @@ for epoch in range(arglist.n_epochs):
 
         if arglist.use_cuda:
             print('use cuda')
-            x, target = x.cuda(), y.cuda()
+            x, target = x.cuda(), target.cuda()
+
+        optimizer.zero_grad()
 
         predicted = model(x)
         loss = criterion(predicted, target)
-        ave_loss = ave_loss * 0.9 + loss.data[0] * 0.1
         loss.backward()
         optimizer.step()
 
-        # if (batch_idx) % 20 == 0 or (batch_idx + 1) == len(d_train):
-        print('==>>> epoch: {}, batch index: {}, train loss: {:.6f}'.format(
-            epoch, batch_idx + 1, ave_loss))
-
-        correct_cnt, ave_loss = 0, 0
-        total_cnt = 0
-
-
+        running_loss += loss.item()
+        # print(loss.item())
+        if (batch_idx) % 1000 == 0:
+            print('==>>> epoch: {}, batch index: {}, train loss: {:.6f}'.format(
+                epoch, batch_idx + 1, running_loss))
+            running_loss = 0.0

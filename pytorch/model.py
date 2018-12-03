@@ -24,6 +24,7 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(256, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
+        self.name = 'TEST'
 
     def forward(self, x):
         # Max pooling over a (2, 2) window
@@ -104,4 +105,4 @@ if __name__ == '__main__':
                 print('==>>> epoch: {}, batch index: {}, test loss: {:.6f}, acc: {:.3f}'.format(
                     epoch, batch_idx + 1, ave_loss, correct_cnt * 1.0 / total_cnt))
 
-        torch.save(model.state_dict(), model.name())
+       # torch.save(model.state_dict(), model.name())
