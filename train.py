@@ -46,8 +46,8 @@ def rolling(df, window, step):
         count+=step
 
 d_train = load_dataset(train_mode=True)
+d_test = load_dataset(train_mode=False)
 model = build_network()
-
 
 
 # https://stackoverflow.com/questions/51102205/how-to-know-the-labels-assigned-by-astypecategory-cat-codes
@@ -83,7 +83,6 @@ for epoch in range(arglist.n_epochs):
     running_loss = 0
 
     for batch_idx, data in rolling(d_train, arglist.n_batch_size, arglist.n_batch_size):
-
         """
         temporarily, 30 -> 10
         """
@@ -106,3 +105,34 @@ for epoch in range(arglist.n_epochs):
         # print(loss.item())
         # if (batch_idx) % 1000 == 0:
     print('==>>> epoch: {}, train loss: {:.6f}'.format(epoch, running_loss))
+
+
+"""
+model test phrase
+"""
+
+model.train(False)
+
+n_correct = 0
+
+for batch_idx, data in rolling(d_test, arglist.n_batch_size, arglist.n_batch_size):
+
+    """
+    temporarily, 30 -> 10
+    """
+    change30 = lambda x: 10 if x == 30 else x
+    x = Variable(torch.from_numpy(data.drop(['y', 'map', 'race', 'time'], axis=1).values).float())
+    # target = Variable(torch.from_numpy(np.asarray([change30(x) for x in data['y'].values])).long())
+    target = np.asarray([change30(x) for x in data['y'].values])
+
+    if arglist.use_cuda:
+        print('use cuda')
+        x, target = x.cuda(), target.cuda()
+
+    predicted = model(x)
+    y = predicted.detach().numpy()
+    y = np.argmax(y, axis=1)
+
+    n_correct = n_correct + np.sum(target==y)
+
+print('accuracy : {}'.format(n_correct / len(d_test)))

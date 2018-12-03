@@ -9,7 +9,7 @@ nn_output_size = 11
 
 use_cuda = False
 
-n_epochs = 100
+n_epochs = 10
 n_batch_size = 40
 
 n_train_files = 50
