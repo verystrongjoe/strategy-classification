@@ -4,7 +4,7 @@ pickle_dir = 'prepocessed_data/'
 pickle_file = 'data.pickle'
 
 nn_hidden_size = 100
-nn_input_size = 27
+nn_input_size = 26
 nn_output_size = 11
 
 use_cuda = False

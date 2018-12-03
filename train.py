@@ -72,7 +72,7 @@ print('--------------------------------------------')
 
 # This is particularly useful when you have an unbalanced training set.
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+optimizer = optim.SGD(model.parameters(), lr=0.02, momentum=0.9)
 
 
 ave_loss = 0
@@ -88,7 +88,7 @@ for epoch in range(arglist.n_epochs):
         temporarily, 30 -> 10
         """
         change30 = lambda x: 10 if x == 30 else x
-        x = Variable(torch.from_numpy(data.drop(['y', 'map', 'race'], axis=1).values).float())
+        x = Variable(torch.from_numpy(data.drop(['y', 'map', 'race', 'time'], axis=1).values).float())
         target = Variable(torch.from_numpy(np.asarray([change30(x) for x in data['y'].values])).long())
 
         if arglist.use_cuda:
@@ -104,7 +104,5 @@ for epoch in range(arglist.n_epochs):
 
         running_loss += loss.item()
         # print(loss.item())
-        if (batch_idx) % 1000 == 0:
-            print('==>>> epoch: {}, batch index: {}, train loss: {:.6f}'.format(
-                epoch, batch_idx + 1, running_loss))
-            running_loss = 0.0
+        # if (batch_idx) % 1000 == 0:
+    print('==>>> epoch: {}, train loss: {:.6f}'.format(epoch, running_loss))
