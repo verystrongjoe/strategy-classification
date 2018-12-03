@@ -23,7 +23,7 @@ class ClassificationModel(nn.Module):
     def forward(self, i):
         h = F.relu(self.fc1(i))
         h = F.relu(self.fc2(h))
-        o = F.softmax(self.fc3(h))
+        o = self.fc3(h)
         return o
 
 def build_network():
